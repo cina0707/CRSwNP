@@ -1,0 +1,191 @@
+---
+title: "Figure1.Two distinct sinonasal microbial community types in CRSwNP Patients"
+author: "LYM"
+date: "2025-01-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+#Clean workspace
+rm(list=ls()) 
+# Load setting and functions
+#source("../script/stat_plot_functions.R")
+# Set output directory
+output_dir="./"
+
+```
+
+
+## a.CON_CT1_CT2_CommunityType_composition
+```{r composition}
+
+#write.table(CON_BQ72_BQ40_BQ50_res5_train1t2_composition1_melt1,"D://LCW//BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CON_CT1_CT2_composition1.txt",sep="\t",quote=F)
+
+CON_CT1_CT2_composition1<-read.table("D://LCW//BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CON_CT1_CT2_composition1.txt", header = T, sep = "\t")
+
+CON_CT1_CT2_composition1$Genus<-factor(CON_CT1_CT2_composition1$Genus, 
+                                       levels=rev(c("Corynebacterium","Propionibacterium","Staphylococcus","Streptococcus","Lactobacillus",
+                                                    "Alloiococcus","Prevotella","Haemophilus","Porphyromonas","Fusobacterium",
+                                                    "Bacteroides","Anaerococcus","Sphingomonas","Moraxella","Peptoniphilus","Stenotrophomonas",
+                                                    "Serratia","Parvimonas","Finegoldia","Burkholderia","Acinetobacter","others")))
+p<-ggplot(CON_CT1_CT2_composition1, aes(variable, 100*value, fill = Genus)) +
+  geom_col(position = 'stack', width = 0.6) +                                                                              
+  scale_fill_manual(values=c("Corynebacterium"="#00B579","Propionibacterium"="#004C73",
+                             "Staphylococcus"="#FFC45F","Streptococcus"="#CD0F00",
+                             "Lactobacillus"="purple","Alloiococcus"="#C55CB6",
+                             "Prevotella"="#00A592","Haemophilus"="orange",
+                             "Porphyromonas"="#0093A6","Fusobacterium"="#0093A6",
+                             "Bacteroides"="#F9F871","Anaerococcus"="#483D8B",
+                             "Sphingomonas"="#71C25E","Moraxella"="#A06C20",
+                             "Peptoniphilus"="#FF6997","Stenotrophomonas"="#FF9174",
+                             "others"="#7F7F7F"))+labs(x='',y='RelativeAbundance(%)')+
+  facet_grid(~Group,scales="free_x",space="free_x")+
+  theme(panel.grid= element_blank(), 
+        panel.background = element_rect(color = 'black', fill='transparent'),
+        strip.text=element_text(size=7))+
+  theme(axis.text=element_text(size=7),
+        axis.text.x=element_text(size=7, angle = 90,vjust =0,hjust = 1, color = "black"),
+        axis.title=element_text(size=7),legend.title=element_blank(),legend.text = element_text(size = 7))
+ggsave("D://LCW//BQ_CRS//merged_3batch//Figure20250107_github//Figure//Figure1A_CON_CT1_CT2_CommunityType_composition_0.2.pdf",p,width=22,height=5)
+
+```
+
+## b.CON_CT1_CT2_CommunityType_composition_Mean
+
+```{r composition_mean}
+###合并CON,CT1,CT2
+#total_row_CT_rbind1t_sorted2_melt1_con<-rbind(total_row_CT_rbind1t_sorted2_melt1,result_con4_Mean1)
+#write.table(total_row_CT_rbind1t_sorted2_melt1_con,"D://LCW//BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CON_CT1_CT2_composition1_mean.txt",sep="\t",quote=F)
+
+CON_CT1_CT2_composition1_mean<-read.table("D://LCW//BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CON_CT1_CT2_composition1_mean.txt", header = T, sep = "\t")
+CON_CT1_CT2_composition1_mean$variable<-factor(CON_CT1_CT2_composition1_mean$variable,levels=c("CON","CT1","CT2"))
+
+p<-ggplot(CON_CT1_CT2_composition1_mean, aes(variable, 100*value, fill = Genus)) +
+  geom_col(position = 'fill', width = 0.6) +
+  scale_fill_manual(values=c("Corynebacterium"="#00B579","Propionibacterium"="#004C73","Staphylococcus"="#FFC45F",
+                             "Streptococcus"="#CD0F00","Lactobacillus"="purple","Haemophilus"="orange","Porphyromonas"="#0093A6",
+                             "Prevotella"="#00A592","Fusobacterium"="#0093A6",
+                             "Bacteroides"="#F9F871","Alloiococcus"="#C55CB6","Anaerococcus"="#483D8B",
+                             "Sphingomonas"="#71C25E","Moraxella"="#A06C20","others"="#7F7F7F"))+
+  labs(x='',y='RelativeAbundance(%)')+
+  theme(panel.grid= element_blank(), 
+        panel.background = element_rect(color = 'black', fill='transparent'), 
+        strip.text=element_text(size=6))+
+  theme(axis.text=element_text(size=6),
+        axis.text.x=element_text(size=6, angle = 90,vjust =0,hjust = 1, color = "black"),
+        axis.title=element_text(size=6),
+        legend.title=element_blank(), 
+        legend.text = element_text(size = 6,face="italic"))
+ggsave("D://LCW//BQ_CRS//merged_3batch//Figure20250107_github//Figure//Figure1B_CON_CT1_CT2_CommunityType_composition_mean.pdf",p,width=5,height=4)
+
+```
+
+## c.CON_CT1_CT2_CommunityType_Richness
+```{r Richness and Simpson}
+
+#write.table(BQ72_BQ40_BQ50_res5_train1t1.t_alpha_CommunityType_CON,"D://LCW//BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CON_CT1_CT2_alpha.txt",sep="\t",quote=F)
+
+CON_CT1_CT2_alpha<-read.table("D:/LCW/BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CON_CT1_CT2_alpha.txt",header=T,sep = "\t")
+
+CON_CT1_CT2_alpha$Group<-factor(CON_CT1_CT2_alpha$Group,levels=c("CON",'CT1','CT2'))
+
+pdf("D://LCW//BQ_CRS//merged_3batch//Figure20250107_github//Figure//Figure1C_CON_CT1_CT2_alpha.pdf", width=4,height=4)
+
+ggplot(data=CON_CT1_CT2_alpha,aes(x=Group,y=Richness))+
+  geom_boxplot(aes(fill=Group),outlier.colour=NA)+
+  scale_fill_manual(values=c("CON"="#E9CF91",'CT1'="#F28E97",'CT2'="#8FA9FC"),
+                    labels=c("CON",'CT1','CT2'))+
+  theme_classic()+
+  labs(x=paste("Group"),y=paste("Richness-Index"))+
+  theme(axis.text.x=element_text(size=10,colour="#000000"), 
+        axis.text.y=element_text(size=10,colour="#000000"),
+        axis.title.x=element_text(size=10,colour="#000000"),
+        axis.title.y=element_text(size=10,colour="#000000"),
+        legend.text=element_text(size=10))+
+  geom_jitter(position=position_jitter(0.08))+
+  geom_signif(comparisons=list(c("CON","CT1"),c('CT1','CT2'),c("CON","CT2")),
+              test=wilcox.test,step_increase=0.1, 
+              map_signif_level=function(p)sprintf("p = %.2g", p), 
+              colour="#000000")
+
+ggplot(data=CON_CT1_CT2_alpha,aes(x=Group,y=Simpson))+
+  geom_boxplot(aes(fill=Group),outlier.colour=NA)+
+  scale_fill_manual(values=c("CON"="#E9CF91",'CT1'="#F28E97",'CT2'="#8FA9FC"),
+                    labels=c("CON",'CT1','CT2'))+
+  theme_classic()+
+  labs(x=paste("Group"),y=paste("Simpson-Index"))+
+  theme(axis.text.x=element_text(size=10,colour="#000000"), 
+        axis.text.y=element_text(size=10,colour="#000000"),
+        axis.title.x=element_text(size=10,colour="#000000"),
+        axis.title.y=element_text(size=10,colour="#000000"),
+        legend.text=element_text(size=10))+
+  geom_jitter(position=position_jitter(0.08))+
+  geom_signif(comparisons=list(c("CON","CT1"),c('CT1','CT2'),c("CON","CT2")),
+              test=wilcox.test,step_increase=0.1, 
+              map_signif_level=function(p)sprintf("p = %.2g", p), 
+              colour="#000000")
+dev.off()
+
+```
+
+## d.CT1_CT2_CommunityType_PCoA
+```{r PCoA}
+#write.table(BQ72_BQ40_BQ50_merged_df_beta_diversity,"D:/LCW/BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CT1_CT2_PCOA.txt",sep="\t",quote=F)
+#write.table(BQ72_BQ40_BQ50_merged_df_beta_diversity_eig,"D:/LCW/BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CT1_CT2_PCOA_eig.txt",sep="\t",quote=F)
+#write.table(BQ72_BQ40_BQ50_merged_df_beta_diversity_R1,"D:/LCW/BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CT1_CT2_PCOA_R1.txt",sep="\t",quote=F)
+#write.table(BQ72_BQ40_BQ50_merged_df_beta_diversity_P1,"D:/LCW/BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CT1_CT2_PCOA_P1.txt",sep="\t",quote=F)
+
+CT1_CT2_PCOA<-read.table("D:/LCW/BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CT1_CT2_PCOA.txt",header=T,sep = "\t")
+CT1_CT2_PCOA_eig<-read.table("D:/LCW/BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CT1_CT2_PCOA_eig.txt",header=T,sep = "\t") %>% as.matrix()
+CT1_CT2_PCOA_R1<-read.table("D:/LCW/BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CT1_CT2_PCOA_R1.txt",header=T,sep = "\t")
+CT1_CT2_PCOA_P1<-read.table("D:/LCW/BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CT1_CT2_PCOA_P1.txt",header=T,sep = "\t")
+
+pdf("D://LCW//BQ_CRS//merged_3batch//Figure20250107_github//Figure//Figure1D_CT1_CT2_PCOA.pdf",width=5,height=4)
+ggplot(CT1_CT2_PCOA,aes(x=x,y=y,fill=CommunityType))+
+  scale_fill_manual(values=c('CT1'="#F28E97",'CT2'="#8FA9FC"),labels=c('CT1','CT2'))+
+  geom_point(alpha=1,size=3,stroke=0.5,shape=21,color="black")+
+  labs(x=paste("PCoA1(",format(100*CT1_CT2_PCOA_eig[1]/sum(CT1_CT2_PCOA_eig),digits=4),"%)",sep=""),
+       y=paste("PCoA2(",format(100*CT1_CT2_PCOA_eig[2]/sum(CT1_CT2_PCOA_eig),digits=4),"%)",sep=""))+
+  theme_classic()+
+  annotate("text",x=0.30,y=-0.48,parse=TRUE,size=4,
+           label=paste('R:',round(CT1_CT2_PCOA_R1,digits=3)),
+           family="serif",fontface="italic",colour="black")+
+  annotate("text",x=0.32,y=-0.42,parse=TRUE,size=4,
+           label=paste('p:',round(CT1_CT2_PCOA_P1,digits=3)),
+           family="serif",fontface="italic",colour="black")+
+  stat_ellipse(level = 0.99)
+dev.off()
+
+```
+
+## e.CT1_CT2_CommunityType_Lefse
+```{r lefse}
+
+#write.table(Genus_lefse3,"D:/LCW/BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CT1_CT2_Lefse.txt",sep="\t",quote=F)
+CT1_CT2_Lefse<-read.table("D:/LCW/BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CT1_CT2_Lefse.txt",header=T,sep = "\t")
+CT1_CT2_Lefse$LDA1<-as.numeric(CT1_CT2_Lefse$LDA1)
+CT1_CT2_Lefse$Taxa <-reorder(CT1_CT2_Lefse$Taxa , CT1_CT2_Lefse$LDA1) ###按由大到小的顺序进行排列。
+CT1_CT2_Lefse$Group <-factor(CT1_CT2_Lefse$Group, levels=c("CT1","CT2"))
+
+pdf("D://LCW//BQ_CRS//merged_3batch//Figure20250107_github//Figure//Figure1E_CT1_CT2_lefse.pdf",width=4,height=6)
+ggplot(CT1_CT2_Lefse, aes(x = Taxa, y = LDA1,fill=Group)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  scale_fill_manual(values=c('CT1'="#F28E97",'CT2'="#8FA9FC"),labels=c('CT1','CT2'))+
+  theme_classic()+
+  theme(axis.text.x=element_text(size=7,colour="#000000"),
+        axis.text.y=element_text(size=7,face="italic",colour="#000000"),
+        axis.title.x=element_text(size=7,colour="#000000"),
+        axis.title.y=element_text(size=7,colour="#000000"),
+        legend.text=element_text(size=7),
+        legend.title=element_text(size=0))+
+  labs(x=paste(""),y=paste("LDA score(log10)"))+
+  theme(legend.position = c(0.8,0.15))       
+dev.off()
+
+```
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
