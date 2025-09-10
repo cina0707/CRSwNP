@@ -1,4 +1,4 @@
-
-- /main # metadata, OTU table and taxonomy files
-- /fig1-4 # Intermediate data, Rmarkdown scripts and output HTML format results
-- figX/figX.Rmd # X is number 1-4, including the reproducable R scripts for each panel in figure
+This repository contains the full analytical workflow, intermediate files, and clinical metadata for our 16S rRNA gene sequencing project.
+- Each FigX/ folder holds the exact intermediate files (e.g., OTU tables, distance matrices, taxonomic summaries) required to reproduce the corresponding plot.
+- clinical_data/ contains de-identified clinical information for every sample.
+- All folders are at the same hierarchical level to facilitate scripted access.
