@@ -1,0 +1,105 @@
+---
+title: "Figure4.Validation of Microbial Communities in a Separate Dataset"
+author: "LYM"
+date: "2025-01-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##a.CT1_CT2_test_Lefse
+```{r cars}
+#write.table(Genus_lefse_test3,"D:/LCW/BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CT1_CT2_test_Lefse.txt",sep="\t",quote=F)
+CT1_CT2_test_Lefse<-read.table("D:/LCW/BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CT1_CT2_test_Lefse.txt",header=T,sep = "\t")
+CT1_CT2_test_Lefse$LDA1<-as.numeric(CT1_CT2_test_Lefse$LDA1)
+CT1_CT2_test_Lefse$Taxa <-reorder(CT1_CT2_test_Lefse$Taxa , CT1_CT2_test_Lefse$LDA1) ###按由大到小的顺序进行排列。
+CT1_CT2_test_Lefse$Group <-factor(CT1_CT2_test_Lefse$Group, levels=c("CT1","CT2"))
+
+ ###35,6
+pdf("D://LCW//BQ_CRS//merged_3batch//Figure20250107_github//Figure//Figure4A_CT1_CT2_test_Lefse.pdf",width=4,height=6)
+ggplot(CT1_CT2_test_Lefse, aes(x = Taxa, y = LDA1,fill=Group)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  scale_fill_manual(values=c('CT1'="#F28E97",'CT2'="#8FA9FC"),labels=c('CT1','CT2'))+
+  theme_classic()+
+  theme(axis.text.x=element_text(size=7,colour="#000000"),
+        axis.text.y=element_text(size=7,face="italic",colour="#000000"),
+        axis.title.x=element_text(size=7,colour="#000000"),
+        axis.title.y=element_text(size=7,colour="#000000"),
+        legend.text=element_text(size=7),
+        legend.title=element_text(size=0))+
+  labs(x=paste(""),y=paste("LDA score(log10)"))+
+  theme(legend.position = c(0.8,0.15))       
+dev.off()
+```
+
+## b1.CT1_CT2_test_shannon
+
+```{r shannon}
+
+#write.table(BQ72_BQ40_BQ50_test_merged_df_shannon_index_CommunityType,"D:/LCW/BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CT1_CT2_test_Shannon.txt",sep="\t",quote=F)
+CT1_CT2_test_Shannon<-read.table("D:/LCW/BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CT1_CT2_test_Shannon.txt",header=T,sep = "\t")
+CT1_CT2_test_Shannon$CommunityType<-factor(CT1_CT2_test_Shannon$CommunityType,levels=c("CT1","CT2"))
+pdf("D://LCW//BQ_CRS//merged_3batch//Figure20250107_github//Figure//Figure4B_CON_CT1_CT2_test_alpha1.pdf", width=4,height=4)
+ggplot(data=CT1_CT2_test_Shannon,
+       aes(x=CommunityType,y=shannon))+
+  geom_boxplot(aes(fill=CommunityType),outlier.colour=NA)+
+  scale_fill_manual(values=c('CT1'="#F28E97",'CT2'="#8FA9FC"),labels=c('CT1','CT2'))+
+  theme_classic()+
+  labs(x=paste("Group"),y=paste("Shannon-Index"))+
+  theme(axis.text.x=element_text(size=10,colour="#000000"), 
+        axis.text.y=element_text(size=10,colour="#000000"),
+        axis.title.x=element_text(size=10,colour="#000000"),
+        axis.title.y=element_text(size=10,colour="#000000"),
+        legend.text=element_text(size=10))+
+  geom_jitter(position=position_jitter(0.08))+
+  geom_signif(comparisons=list(c('CT1','CT2')),
+              test=wilcox.test,step_increase=0.1, 
+              map_signif_level=function(p)sprintf("p = %.2g", p), 
+              colour="#000000")
+
+dev.off()
+```
+
+## b2.CT1_CT2_test_PCOA
+
+```{r PCOA}
+save(Genus_lefse_test3,
+     BQ72_BQ40_BQ50_test_merged_df_shannon_index_CommunityType,
+    BQ72_BQ40_BQ50_test_merged_df_beta_diversity,
+   BQ72_BQ40_BQ50_test_merged_df_beta_diversity_eig,
+   BQ72_BQ40_BQ50_test_merged_df_beta_diversity_R1,
+   BQ72_BQ40_BQ50_test_merged_df_beta_diversity_P1,
+    file="D://LCW//BQ_CRS//merged_3batch//Figure20250107_github//Rdata//Figure4B.Rdata")
+
+#write.table(BQ72_BQ40_BQ50_test_merged_df_beta_diversity,"D:/LCW/BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CT1_CT2_test_PCOA.txt",sep="\t",quote=F)
+#write.table(BQ72_BQ40_BQ50_test_merged_df_beta_diversity_eig,"D:/LCW/BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CT1_CT2_test_PCOA_eig.txt",sep="\t",quote=F)
+#write.table(BQ72_BQ40_BQ50_test_merged_df_beta_diversity_R1,"D:/LCW/BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CT1_CT2_test_PCOA_R1.txt",sep="\t",quote=F)
+#write.table(BQ72_BQ40_BQ50_test_merged_df_beta_diversity_P1,"D:/LCW/BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CT1_CT2_test_PCOA_P1.txt",sep="\t",quote=F)
+
+CT1_CT2_test_PCOA<-read.table("D:/LCW/BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CT1_CT2_test_PCOA.txt",header=T,sep = "\t")
+CT1_CT2_test_PCOA_eig<-read.table("D:/LCW/BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CT1_CT2_test_PCOA_eig.txt",header=T,sep = "\t") %>% as.matrix()
+CT1_CT2_test_PCOA_R1<-read.table("D:/LCW/BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CT1_CT2_test_PCOA_R1.txt",header=T,sep = "\t")
+CT1_CT2_test_PCOA_P1<-read.table("D:/LCW/BQ_CRS//merged_3batch//Figure20250107_github//Rdata//CT1_CT2_test_PCOA_P1.txt",header=T,sep = "\t")
+
+pdf("D://LCW//BQ_CRS//merged_3batch//Figure20250107_github//Figure//Figure4B_CT1_CT2_test_PCOA.pdf",width=5,height=4)
+ggplot(CT1_CT2_test_PCOA,aes(x=x,y=y,fill=CommunityType))+
+  scale_fill_manual(values=c('CT1'="#F28E97",'CT2'="#8FA9FC"),labels=c('CT1','CT2'))+
+  geom_point(alpha=1,size=3,stroke=0.5,shape=21,color="black")+
+  labs(x=paste("PCoA1(",format(100*CT1_CT2_test_PCOA_eig[1]/sum(CT1_CT2_test_PCOA_eig),digits=4),"%)",sep=""),
+       y=paste("PCoA2(",format(100*CT1_CT2_test_PCOA_eig[2]/sum(CT1_CT2_test_PCOA_eig),digits=4),"%)",sep=""))+
+  theme_classic()+
+  annotate("text",x=0.30,y=-0.48,parse=TRUE,size=4,
+           label=paste('R:',round(CT1_CT2_test_PCOA_R1,digits=3)),
+           family="serif",fontface="italic",colour="black")+
+  annotate("text",x=0.32,y=-0.42,parse=TRUE,size=4,
+           label=paste('p:',round(CT1_CT2_test_PCOA_P1,digits=3)),
+           family="serif",fontface="italic",colour="black")+
+  stat_ellipse(level = 0.99)
+dev.off()
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
